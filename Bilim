@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bilim va O‘yin</title>
+<style>
+:root{--bg:#f4efe4;--card:#fffaf0;--tx:#2a2116;--mu:#7a6a52;--ac:#b8862b;--ln:#e0d4bb}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1624;--card:#17223a;--tx:#f2ecdd;--mu:#9aa6bd;--ac:#e9bb62;--ln:#27344f}}
+*{box-sizing:border-box}
+body{margin:0 auto;max-width:680px;padding:0 16px 40px;background:var(--bg);color:var(--tx);font-family:system-ui,sans-serif;line-height:1.5}
+header{padding:36px 0 18px;text-align:center}
+header h1{font-size:30px;margin:0 0 8px}header p{margin:0;color:var(--mu)}
+.card{display:block;background:var(--card);border:1px solid var(--ln);border-radius:18px;padding:18px;margin:14px 0;text-decoration:none;color:inherit}
+.ic{font-size:38px}.card h2{margin:6px 0 4px;font-size:20px}.card p{margin:0 0 14px;color:var(--mu);font-size:15px}
+.btn{display:inline-block;background:var(--ac);color:#1a1306;font-weight:700;padding:11px 20px;border-radius:10px}
+footer{margin-top:30px;text-align:center;color:var(--mu);font-size:13px}
+</style></head><body>
+<header><h1>Bilim va O‘yin</h1><p>Tarixni o‘rganing va qal‘angizni quring. Bepul, o‘zbek tilida.</p></header>
+<a class="card" href="viktorina.html"><div class="ic">📚</div><h2>Tarix va Geografiya viktorinasi</h2><p>100 ta savol, 15 soniyalik test va har kuni yangi fakt.</p><span class="btn">Testni boshlash</span></a>
+<a class="card" href="qala.html"><div class="ic">🏰</div><h2>Amir Temur qal‘asi</h2><p>Qal‘a quring, askar yig‘ing va dushmanga hujum qiling.</p><span class="btn">O‘ynash</span></a>
+<footer>© 2026 · Bilim va O‘yin</footer>
+</body></html>
