@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Amir Temur qal‘asi</title>
+<style>
+:root{--bg:#f4efe4;--card:#fffaf0;--tx:#2a2116;--mu:#7a6a52;--ac:#b8862b;--ln:#e0d4bb;--ok:#2f8f5b;--bad:#c0463a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1624;--card:#17223a;--tx:#f2ecdd;--mu:#9aa6bd;--ac:#e9bb62;--ln:#27344f;--ok:#70d6b1;--bad:#ff9b9b}}
+:root[data-theme="dark"]{--bg:#0f1624;--card:#17223a;--tx:#f2ecdd;--mu:#9aa6bd;--ac:#e9bb62;--ln:#27344f;--ok:#70d6b1;--bad:#ff9b9b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:0 14px 40px;max-width:640px;margin:auto}
+h1{font-size:22px;margin:16px 0 8px}h2{font-size:15px;color:var(--mu);margin:22px 0 8px;letter-spacing:.04em;text-transform:uppercase}
+.res{position:sticky;top:env(safe-area-inset-top,0px);z-index:2;display:flex;gap:10px;background:var(--bg);padding:8px 0}
+.res div{flex:1;background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:8px 10px;font-weight:700;font-size:17px}
+.res small{display:block;color:var(--mu);font-weight:500;font-size:11px}
+.c{background:var(--card);border:1px solid var(--ln);border-radius:14px;padding:12px;margin-bottom:10px}
+.r{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.c p{margin:4px 0 10px;color:var(--mu);font-size:14px}
+button{width:100%;padding:12px;border:0;border-radius:10px;background:var(--ac);color:#1a1306;font-weight:700;font-size:15px}
+button:disabled{opacity:.4}
+.two{display:flex;gap:8px}.two button{flex:1}
+#log{background:var(--card);border-left:4px solid var(--ac);border-radius:8px;padding:12px;margin:10px 0;font-size:14px;min-height:46px}
+.rs{background:transparent;color:var(--mu);border:1px solid var(--ln);margin-top:20px;font-weight:500}
+.lb{display:none}.lb.on{display:block}.lb ol{margin:0;padding-left:22px}.lb li{padding:6px 0;border-bottom:1px solid var(--ln);gap:8px}.lb li.me{font-weight:700;color:var(--ac)}.lb li span+span{float:right}
+.arena{position:relative;height:130px;background:var(--card);border:1px solid var(--ln);border-radius:14px;margin:10px 0;overflow:hidden;display:none}.arena.on{display:block}.arena span{position:absolute;font-size:28px;transition:left 1.2s ease-in,opacity .6s}.arena .en{right:14px;top:34px;font-size:56px}
+</style></head><body>
+<h1>🏰 Amir Temur qal‘asi</h1>
+<div class="res"><div>🪙 <span id="g">0</span><small id="gr"></small></div><div>🌾 <span id="f">0</span><small id="fr"></small></div></div>
+<div id="log"></div>
+<div class="arena" id="ar2"></div>
+<h2>Qurilishlar</h2><div id="bl"></div>
+<h2>Qo‘shin</h2><div class="c"><div class="r"><b id="ar"></b></div><p>Har bir askar: 10 🌾 + 5 🪙</p><div class="two"><button data-a="tr" data-k="1" data-n="1" data-g="5" data-f="10">+1 askar</button><button data-a="tr" data-k="5" data-n="5" data-g="25" data-f="50">+5 askar</button></div></div>
+<h2>Hujum</h2><div id="el"></div>
+<div class="lb" id="lb"><h2>Reyting (eng ko‘p g‘alaba)</h2><div class="c"><ol id="lbl"></ol><p id="lbn"></p></div></div>
+<button class="rs" data-a="rs">O‘yinni boshidan boshlash</button>
+<script>
+const K='temur_qalasi_v1',$=id=>document.getElementById(id);
+const cap=l=>5+5*l,MAX=10;
+const B={mine:{n:'Oltin koni',i:'⛏️',b:50,f:0,t:l=>`+${l*2} oltin/s`},farm:{n:'Dala',i:'🌾',b:40,f:0,t:l=>`+${l} oziq/s`},castle:{n:'Qal‘a',i:'🏰',b:120,f:1,t:l=>`Qo‘shin sig‘imi: ${cap(l)}`},barr:{n:'Kazarma',i:'⚔️',b:100,f:1,t:l=>`Askar kuchi +${l*20}%`}};
+const E=[['Kichik qishloq','🏘️',6],['Dushman qo‘rg‘oni','🏯',14],['Qora qal‘a','☠️',28]];
+const fresh=()=>({gold:100,food:60,lv:{mine:1,farm:1,castle:1,barr:1},army:3,wins:0,t:Date.now(),msg:'Xush kelibsiz, Amir! Qal‘ani quring, askar yig‘ing va dushmanga hujum qiling.'});
+let s=null;try{s=JSON.parse(localStorage.getItem(K))}catch(e){}
+s=s||fresh();
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(s))}catch(e){}};
+const cost=k=>{const c=Math.round(B[k].b*Math.pow(1.6,s.lv[k]-1));return[c,B[k].f?Math.round(c/2):0]};
+const def=i=>Math.round(E[i][2]*(1+.12*s.wins));
+const pw=()=>Math.round(s.army*(1+.2*s.lv.barr));
+const say=m=>{s.msg=m;$('log').textContent=m};
+function adv(){const n=Date.now(),dt=Math.min((n-s.t)/1000,28800),g=dt*s.lv.mine*2,f=dt*s.lv.farm;s.t=n;s.gold+=g;s.food+=f;return[g,f,dt]}
+function render(){
+ $('bl').innerHTML=Object.keys(B).map(k=>{const l=s.lv[k],c=cost(k);return `<div class="c"><div class="r"><b>${B[k].i} ${B[k].n}</b><span>${l}-daraja</span></div><p>${B[k].t(l)}</p><button data-a="up" data-k="${k}" data-g="${c[0]}" data-f="${c[1]}">${l>=MAX?'Eng yuqori daraja':'Yaxshilash: '+c[0]+' 🪙'+(c[1]?' + '+c[1]+' 🌾':'')}</button></div>`}).join('');
+ $('el').innerHTML=E.map((e,i)=>`<div class="c"><div class="r"><b>${e[1]} ${e[0]}</b><span>Kuch: ${def(i)}</span></div><p>O‘lja: ${def(i)*6} 🪙 + ${def(i)*3} 🌾</p><button data-a="atk" data-k="${i}">Hujum qilish ⚔️</button></div>`).join('');
+ $('log').textContent=s.msg;refresh();
+}
+function refresh(){
+ $('g').textContent=Math.floor(s.gold);$('f').textContent=Math.floor(s.food);
+ $('gr').textContent='+'+s.lv.mine*2+'/s';$('fr').textContent='+'+s.lv.farm+'/s';
+ $('ar').textContent=`Askar: ${s.army} / ${cap(s.lv.castle)} · Kuch: ${pw()}`;
+ document.querySelectorAll('button[data-g]').forEach(b=>{const n=+b.dataset.n||0;b.disabled=s.gold<+b.dataset.g||s.food<+b.dataset.f||(b.dataset.a==='up'&&s.lv[b.dataset.k]>=MAX)||(b.dataset.a==='tr'&&s.army+n>cap(s.lv.castle))});
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button[data-a]');if(!b||busy)return;adv();const a=b.dataset.a,k=b.dataset.k;
+ if(a==='up'){const c=cost(k);if(s.gold>=c[0]&&s.food>=c[1]&&s.lv[k]<MAX){s.gold-=c[0];s.food-=c[1];s.lv[k]++;say(`${B[k].n} ${s.lv[k]}-darajaga ko‘tarildi!`)}}
+ else if(a==='tr'){const n=+k;if(s.gold>=5*n&&s.food>=10*n&&s.army+n<=cap(s.lv.castle)){s.gold-=5*n;s.food-=10*n;s.army+=n;say(`${n} ta askar tayyorlandi.`)}}
+ else if(a==='atk'){
+  if(s.army<1){say('Avval askar tayyorlang!')}
+  else{const d=def(+k),p=pw()*(.8+Math.random()*.4);
+   if(p>=d){const g=d*6,f=d*3,l=Math.ceil(s.army*(.15+Math.random()*.2));s.gold+=g;s.food+=f;s.wins++;push();battle(+k,1,Math.min((s.army-=l)+l,8),`G‘alaba! +${g} oltin, +${f} oziq. ${l} askar halok bo‘ldi.`)}
+   else{const l=Math.ceil(s.army*.6);battle(+k,0,Math.min((s.army-=l)+l,8),`Mag‘lubiyat... ${l} askar halok bo‘ldi. Qo‘shin va kazarmani kuchaytiring.`)}}
+ }
+ else if(a==='rs'){if(b.dataset.s){s=fresh();b.textContent='O‘yinni boshidan boshlash';delete b.dataset.s}else{b.dataset.s=1;b.textContent='Aniqmi? Yana bosing';return}}
+ render();save();
+});
+const o=adv();render();if(o[2]>60)say(`Siz yo‘q paytda: +${Math.floor(o[0])} oltin, +${Math.floor(o[1])} oziq yig‘ildi.`);
+let busy=false;
+function battle(i,win,n,msg){busy=true;say('⚔️ Jang boshlandi...');const A=$('ar2');A.innerHTML='';A.classList.add('on');
+const en=document.createElement('span');en.className='en';en.textContent=E[i][1];A.append(en);
+const sd=[];for(let j=0;j<Math.max(n,1);j++){const e=document.createElement('span');e.textContent='🗡️';e.style.left=(3+Math.floor(j/4)*5)+'%';e.style.top=(8+(j%4)*26)+'px';A.append(e);sd.push(e)}
+setTimeout(()=>sd.forEach((e,j)=>{e.style.transitionDuration=(1.1+j*.08)+'s';e.style.left=(60-Math.floor(j/4)*6)+'%'}),60);
+setTimeout(()=>{const b=document.createElement('span');b.textContent='💥';b.style.left='66%';b.style.top='34px';b.style.fontSize='44px';A.append(b)},1400);
+setTimeout(()=>{if(win){en.textContent='🔥';en.style.opacity='.5'}else{sd.forEach(e=>e.style.opacity=0)}},2000);
+setTimeout(()=>{A.classList.remove('on');busy=false;say(msg);refresh()},3200)}
+let DB=null,UID=null,USR=null;
+function push(){if(!DB||!UID)return;DB.doc('players/'+UID).set({wins:s.wins,castle:s.lv.castle}).catch(()=>{$('lbn').textContent='Natijangiz reytingga yozilmadi (yozish huquqi kerak).'})}
+async function lbInit(){try{if(!window.claude)return;DB=await claude.use('db');USR=await claude.use('user');if(!DB||!USR)return;UID=await USR.id();if(!UID)return;$('lb').classList.add('on');if(s.wins>0)push();
+DB.collection('players').orderBy('wins','desc').limit(10).onSnapshot(async snap=>{const rows=snap.docs.map(d=>({id:d.id,...d.data()}));let ps={};try{ps=await USR.profiles(rows.map(r=>r.id))}catch(e){}const ol=$('lbl');ol.innerHTML='';rows.forEach(r=>{const li=document.createElement('li');if(r.id===UID)li.className='me';const a=document.createElement('span'),b=document.createElement('span');a.textContent=((ps[r.id]&&ps[r.id].name)||'Amir')+(r.id===UID?' (siz)':'');b.textContent='🏆 '+r.wins+' · 🏰 '+r.castle;li.append(a,b);ol.append(li)});$('lbn').textContent=rows.length?'':'Hali hech kim yo‘q. Birinchi g‘alabani qo‘lga kiriting!'},e=>{$('lb').classList.remove('on')})}catch(e){}}
+lbInit();
+let c=0;setInterval(()=>{adv();refresh();if(++c%5===0)save()},1000);
+</script></body></html>
